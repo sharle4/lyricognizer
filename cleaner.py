@@ -31,4 +31,3 @@ output_file = "texts/lyrics_preprocessed.txt"
 preprocessed_text = preprocess_text(file_path)
 save_preprocessed_text(preprocessed_text, output_file)
 print("Texte prétraité enregistré avec succès dans", output_file)
-
