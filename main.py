@@ -1,4 +1,4 @@
-from ncd import ncd
+from ncd_lzma import ncd
 from cleaner import *
 import os
 
