@@ -42,10 +42,10 @@ def preprocess_str(text):
 
     return text
 
+if __name__ == "__main__":
+    file_path = "texts/lyrics.txt"
+    output_file = "texts/lyrics_preprocessed.txt"
 
-file_path = "texts/lyrics.txt"
-output_file = "texts/lyrics_preprocessed.txt"
-
-preprocessed_text = preprocess_text(file_path)
-save_preprocessed_text(preprocessed_text, output_file)
-print("Texte prétraité enregistré avec succès dans", output_file)
+    preprocessed_text = preprocess_text(file_path)
+    save_preprocessed_text(preprocessed_text, output_file)
+    print("Texte prétraité enregistré avec succès dans", output_file)
