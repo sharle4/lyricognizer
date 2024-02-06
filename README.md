@@ -7,12 +7,12 @@ Créer une IA qui reçoit un texte de musique en entrée et qui doit donner le c
 **Processus :**
 1. [ ] Collecte de données (API Genius)
 2. [ ] Pré-traitement des données 
-    - [ ] Nettoyage et normalisation du texte
+    - [x] Nettoyage et normalisation du texte
     - [ ] Suppression de mots inutiles (le, la, ...)
     - [ ] Racinisation des mots
 3. [ ] Séparation des données (80% entraînement, 20% test)
 4. [ ] Calcul du NCD à l’aide de plusieurs méthodes de compression
-    - [ ] zlib
+    - [x] zlib
     - [ ] gzip
     - [ ] bzip2
     - [ ] lzma
