@@ -21,11 +21,13 @@ def ncd(text1, text2):
     
     return ncd_value
 
-file_path = "texts/lyrics_preprocessed"
-with open(file_path + ".txt", 'r', encoding='utf-8') as file:
-    text1 = file.read()
-with open(file_path + "1.txt", 'r', encoding='utf-8') as file:
-    text2 = file.read()
-    
-distance = ncd(text1, text2)
-print("Normalized Compression Distance:", distance)
+
+if __name__ == "__main__":
+    file_path = "texts/lyrics_preprocessed"
+    with open(file_path + ".txt", 'r', encoding='utf-8') as file:
+        text1 = file.read()
+    with open(file_path + "1.txt", 'r', encoding='utf-8') as file:
+        text2 = file.read()
+        
+    distance = ncd(text1, text2)
+    print("Normalized Compression Distance:", distance)
