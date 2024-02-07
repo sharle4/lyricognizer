@@ -1,5 +1,9 @@
 import re
 import unidecode
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import SnowballStemmer
+from nltk.stem import WordNetLemmatizer
 
 def preprocess_text(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -26,7 +30,7 @@ def save_preprocessed_text(preprocessed_text, output_file):
         file.write(preprocessed_text)
 
 def preprocess_str(text):
-        # Remove annotations indicating verses and choruses
+    # Remove annotations indicating verses and choruses
     text = re.sub(r'\[.*?\]', '', text)
 
     # Remove punctuation and capital letters
@@ -40,7 +44,25 @@ def preprocess_str(text):
     # Delete accents
     text = unidecode.unidecode(text)
 
-    return text
+    # Tokenisation
+    tokens = word_tokenize(text)
+
+    # Supprimer les stopwords
+    stop_words = set(stopwords.words('french'))
+    filtered_tokens = [word for word in tokens if word not in stop_words]
+
+    # Stemming
+    stemmer = SnowballStemmer('french')
+    stemmed_tokens = [stemmer.stem(token) for token in filtered_tokens]
+
+    # Lemmatisation
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_tokens = [lemmatizer.lemmatize(token) for token in stemmed_tokens]
+
+    # Rejoindre les tokens lemmatisés en une seule chaîne de texte
+    preprocessed_text = ' '.join(lemmatized_tokens)
+    
+    return preprocessed_text
 
 if __name__ == "__main__":
     file_path = "texts/lyrics.txt"
