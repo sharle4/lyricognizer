@@ -1,4 +1,4 @@
-from ncd_lzma import ncd
+from ncd_zlib import ncd
 from cleaner import *
 import os
 
@@ -22,7 +22,6 @@ if __name__ == "__main__":
             continue    
         else:
             artists.append(file)
-            print(artists)
     for artist in artists:
         distances = []
         path = "./genius-lyrics-api-master/lib/dataset/"+artist
