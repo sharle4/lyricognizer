@@ -6,7 +6,8 @@ import re
 genius = lyricsgenius.Genius("1AqF1vBdyL1PRwnyWdxgj8r2nBtBZBnHrJL9Y2azkdne04F-FzOUBzSyATmgGqKA")
 BASE_URL = "https://api.genius.com"
 CLIENT_ACCESS_TOKEN = "1AqF1vBdyL1PRwnyWdxgj8r2nBtBZBnHrJL9Y2azkdne04F-FzOUBzSyATmgGqKA"
-ARTIST_NAME = "B.B. Jacques"
+ARTIST_NAME = "Freeze Corleone"
+folder = "lyrics/freeze/raw/"
 
 # send request and get response in json format.
 def _get(path, params=None, headers=None):
@@ -76,7 +77,7 @@ print("getting song ids. \n")
 song_ids = get_artist_songs(artist_id)
 
 print(song_ids)
-print("\n-> got all the song ids. take a break for a while \n")
+print("\n-> got all the song ids. \n")
 
 print("getting lyrics of each song. \n")
 
@@ -90,17 +91,13 @@ for song_id in song_ids:
         if len(lignes) == 1:
             continue
         lyrics = re.sub(r'You might also like', '', lignes[1][:-5])
-        if lyrics[-1] == "1" or lyrics[-1] == "2":
+        if lyrics[-1].isdigit:
             lyrics = lyrics[:-1]
 
         # Get the title of the song
         title = _get(f"songs/{song_id}")["response"]["song"]["title"]
         # Remove characters that might cause issues in file names
-        title = title.replace("/", "-")
-        title = title.replace("\\", "-")
-        title = title.replace(":", "-")
-        title = title.replace("*", "")
-        folder = "lyrics/bbj/"
+        title = re.sub(r'[\\/:"*?<>|]', '', title)
         # Write the lyrics to a text file
         with open(f"{folder}{title}.txt", "w", encoding="utf-8") as f:
             f.write(lyrics)
