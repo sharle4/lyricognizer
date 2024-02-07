@@ -5,7 +5,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
 from nltk.stem import WordNetLemmatizer
 
-def preprocess_str(text, _stopwords=False, _stemming=False, _lemmatization=False):
+def preprocess(text, _stopwords=False, _stemming=False, _lemmatization=False):
     # Remove annotations indicating verses and choruses
     text = re.sub(r'\[.*?\]', '', text)
 
