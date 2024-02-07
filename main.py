@@ -1,4 +1,5 @@
-from ncd_zlib import ncd
+from ncd_zlib import ncd as ncd_zlib
+from ncd_lzma import ncd as ncd_lzma
 from cleaner import *
 import os
 
@@ -11,9 +12,11 @@ def mean(L):
 
 if __name__ == "__main__":
     text_to_test = str(input("Quelles sont vos lyrics?"))
-    #text_to_test = preprocess_str(text_to_test)
+    text_to_test = preprocess_str(text_to_test)
     #save_preprocessed_text(text_to_test,"texts/lyrics_sample.txt")
     artists = []
+    Dico_zlib = {}
+    Dico_lzma={}
     Dico = {}
     for file in os.listdir("./genius-lyrics-api-master/lib/dataset"):
         if file == "utils":
@@ -23,16 +26,23 @@ if __name__ == "__main__":
         else:
             artists.append(file)
     for artist in artists:
-        distances = []
+        distances_zlib = []
+        distances_lzma = []
         path = "./genius-lyrics-api-master/lib/dataset/"+artist
         songs = os.listdir(path)
         for song in songs:
             with open(path+"/"+song,'r',encoding='utf-8') as file:
                 referring_text = file.read()
-            distance = ncd(text_to_test, referring_text)
-            distances.append(distance)
-        Dico[artist] = mean(distances)
-    print(Dico)
+            distance_zlib = ncd_zlib(text_to_test, referring_text)
+            distance_lzma = ncd_lzma(text_to_test, referring_text)
+            distances_zlib.append(1-distance_zlib)
+            distances_lzma.append(1-distance_lzma)
+        Dico_lzma[artist] = mean(distances_lzma)
+        Dico_zlib[artist] = mean(distances_zlib)
+        Dico[artist] = (Dico_lzma[artist]+Dico_zlib[artist])/2
+    print(f"Dico_zlib: {Dico_zlib}")
+    print(f"Dico_lzma: {Dico_lzma}")
+    print(f"Dico: {Dico}")
         
 
 
