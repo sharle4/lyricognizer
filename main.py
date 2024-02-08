@@ -6,7 +6,7 @@ from ngd import *
 from plotter import bar_chart
 
 def mean(L):
-    return sum(L)/len(L)
+    #return sum(L)/len(L)
     if L ==[]:
         return 0
     else:
@@ -61,6 +61,7 @@ if __name__ == "__main__":
     print(f"dico_lzma: {dico_lzma}")
     print(f"dico: {dico}")
     print(f"dico_ngd: {dico_ngd}")
+    bar_chart(dico_bz2,dico_lzma,dico_zlib,dico_ngd,dico)
         
 
 
