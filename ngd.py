@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import math, sys, time, random, collections
 import numpy as np
 import pandas as pd
+import re
 
 """ 
 A python script to calculate Normalized Google Distance 
@@ -98,18 +99,29 @@ def number_of_results(text):
   """Returns the number of Google results for a given query."""
   headers = {'User-Agent': UserAgent().firefox}
   sleep(1, 3)
-  r = requests.get("https://www.google.com/search?q={}".format(text.replace(" ","+")), headers=headers)
+  r = requests.get("https://www.google.com/search?q="+text.replace(" ","+"),params={"gl":"fr"},headers=headers)
+  #r = requests.get("https://www.google.com/search?q={}".format(text.replace(" ","+")), headers=headers)
   soup = BeautifulSoup(r.text, "lxml") # Get text response
   res = soup.find('div', {'id': 'result-stats'}) # Find result string 
-  print(text,int(res.text.replace(",", "").split()[1]))
-  return int(res.text.replace(",", "").split()[1]) # Return result int
+  print(f"{int(manage(res.text))} résultats pour {text}")
+  #print(text,int(res.text.replace(",", "").split()[1]))
+  return int(manage(res.text)) # Return result int
 
 def sleep(alpha, beta):
   """Sleep for an amount of time in range(alpha, beta)"""
   rand = random.Random()
   time.sleep(rand.uniform(alpha, beta))
 
+def manage(input_string):
+    # Remove all non-digit characters
+    result = re.sub(r'\D', '', input_string)
+    
+    # Remove all spaces
+    result = result.replace(' ', '')
+    
+    return result[:-3]
+
 if __name__ == "__main__":
   print("This is a script for calculating NGD.")
-  calculate_NGD('four','lune')
+  calculate_NGD('drake','étoiles')
 
