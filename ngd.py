@@ -108,4 +108,5 @@ def sleep(alpha, beta):
 
 if __name__ == "__main__":
   print("This is a script for calculating NGD.")
+  calculate_NGD('four','frigo')
 
