@@ -7,6 +7,13 @@ from plotter import bar_chart
 
 def mean(L):
     return sum(L)/len(L)
+    if L ==[]:
+        return 0
+    else:
+        sum = 0
+        for val in L:
+            sum+=val
+        return sum/len(L)
 
 def get_ngd(text,artist):
     tmp = get_frequency(text)
@@ -47,16 +54,15 @@ if __name__ == "__main__":
             distance_bz2 = ncd(text_to_test, referring_text, 'bz2')
             distances_zlib.append(1-distance_zlib)
             distances_lzma.append(1-distance_lzma)
-            distances_bz2.append(1-distance_bz2)
-            
         dico_lzma[artist] = mean(distances_lzma)
         dico_zlib[artist] = mean(distances_zlib)
-        dico_bz2[artist] = mean(distances_bz2)
-        dico[artist] = (dico_zlib[artist] + dico_lzma[artist] + dico_bz2[artist])/3
-        
-    print(f"dico_zlib: {dico_zlib}")
+        dico[artist] = ((dico_lzma[artist]+dico_zlib[artist])*2+dico_ngd[artist])/3
+    print(f"Dico_zlib: {dico_zlib}")
     print(f"dico_lzma: {dico_lzma}")
-    print(f"dico_bz2: {dico_bz2}")
-    #print(f"dico_ngd: {dico_ngd}")
     print(f"dico: {dico}")
-    bar_chart(dico_zlib,dico_lzma,dico_bz2,dico)
+    print(f"dico_ngd: {dico_ngd}")
+        
+
+
+
+

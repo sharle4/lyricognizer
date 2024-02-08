@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import re
 
+ua = UserAgent()
+
 """ 
 A python script to calculate Normalized Google Distance 
 
@@ -97,8 +99,12 @@ def pairwise_NGD_to_df(distances):
 
 def number_of_results(text):
   """Returns the number of Google results for a given query."""
-  headers = {'User-Agent': UserAgent().firefox}
-  sleep(1,3)
+  #headers = {'User-Agent': ua.firefox}
+  headers = {
+    'User-Agent': 'My User Agent 1.0',
+    'From': 'mamane.telecom@gmail.com'  # This is another valid field
+}
+  sleep(1, 3)
   #r = requests.get("https://www.google.com/search?q="+text.replace(" ","+"),params={"gl":"fr"},headers=headers)
   r = requests.get("https://www.google.com/search?q={}".format(text.replace(" ","+")), headers=headers)
   soup = BeautifulSoup(r.text, "lxml") # Get text response
