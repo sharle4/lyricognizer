@@ -1,7 +1,7 @@
 import os
 import random
 
-def renamer(rd:bool):
+def renamer(rd:bool, num=False):
     # Chemin du dossier principal contenant les dossiers d'artistes
     dossier_principal = "./lyrics/"
 
@@ -30,15 +30,24 @@ def renamer(rd:bool):
             subfolders = ['raw', 'processed', 'processed_sw', 'processed_lm']
             for subfolder in subfolders:
                 subfolder = f"{dossier_principal}{artiste}/{subfolder}"
-                noms_fichiers = os.listdir(subfolder)
+                if num == False:
+                    noms_fichiers = os.listdir(subfolder)
 
-                indices = [int(filename.split('_')[1].split('.')[0]) for filename in noms_fichiers]
-                indices.sort()
-                for i, index in enumerate(indices, start = 0):
-                    ori_path = f"{subfolder}/_{index}.txt"
-                    new_name = f"_{i}.txt"
-                    tgt_path = f"{subfolder}/{new_name}"
-                    os.rename(ori_path, tgt_path)
-
-renamer(False)
+                    indices = [int(filename.split('_')[1].split('.')[0]) for filename in noms_fichiers]
+                    indices.sort()
+                    for i, index in enumerate(indices, start = 0):
+                        ori_path = f"{subfolder}/_{index}.txt"
+                        new_name = f"_{i}.txt"
+                        tgt_path = f"{subfolder}/{new_name}"
+                        os.rename(ori_path, tgt_path)
+                else:
+                    for fichier in os.listdir(subfolder):
+                        nom_fichier, extension = os.path.splitext(fichier)
+                        nom_fichier, numero = nom_fichier.split('_')
+                        numero = numero.zfill(2)
+                        nouveau_nom_fichier = f"{nom_fichier}_{numero}{extension}"
+                        ancien_chemin = os.path.join(subfolder, fichier)
+                        nouveau_chemin = os.path.join(subfolder, nouveau_nom_fichier)
+                        os.rename(ancien_chemin, nouveau_chemin)
+renamer(False, True)
                 
