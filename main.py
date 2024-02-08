@@ -3,7 +3,7 @@ from ncd_lzma import ncd as ncd_lzma
 from cleaner import *
 import os
 from frequency import get_frequency
-from ngd import calculate_NGD
+from ngd import *
 
 def mean(L):
     sum = 0
@@ -12,27 +12,39 @@ def mean(L):
     return sum/len(L)
 
 def get_ngd(text,artist):
-    words = get_frequency(text)
+    tmp = get_frequency(text)
+    words = []
     google_distances = []
+    for k in range(len(tmp)):
+        words.append(str(tmp[k][0]))
+    print(words)
     for word in words:
-        google_distances.append(calculate_NGD(word,artist))
+        print(type(word),word)
+        print(type(artist),artist)
+        google_distances.append(calculate_NGD(str(word),str(artist))) 
+    print(mean(google_distances))
     return mean(google_distances)
 
 
+text = str(input("lyrics: "))
 
-if __name__ == "__main__":
-    text_to_test = str(input("Quelles sont vos paroles?"))
-    text_to_test = preprocess(text_to_test)
-    print(text_to_test)
+get_ngd(text,'freeze coleone')
+
+"""if __name__ == "__main__":
     artists = []
-    #Dico_ngd = {}
+    Dico_ngd = {}
+    for folder in os.listdir("./lyrics"):
+        artists.append(folder)
+    text_to_test = str(input("Quelles sont vos paroles?"))
+    #text_to_test = preprocess(text_to_test)
+    print(text_to_test)
+
     Dico_zlib = {}
     Dico_lzma={}
     Dico = {}
-    for folder in os.listdir("./lyrics"):
-        artists.append(folder)
+
     for artist in artists:
-        #Dico_ngd[artist] = get_ngd(text_to_test,artist)
+        Dico_ngd[artist] = get_ngd(text_to_test,artist)
         distances_zlib = []
         distances_lzma = []
         path = f"./lyrics/{artist}/processed"
@@ -50,8 +62,8 @@ if __name__ == "__main__":
     print(f"Dico_zlib: {Dico_zlib}")
     print(f"Dico_lzma: {Dico_lzma}")
     print(f"Dico: {Dico}")
-    #print(f"Dico_ngd: {Dico_ngd}")
-        
+    print(f"Dico_ngd: {Dico_ngd}")
+        """
 
 
 

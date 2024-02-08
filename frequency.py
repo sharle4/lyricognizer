@@ -16,7 +16,7 @@ def get_frequency(text, lang='french'):
     french_stopwords = set(stopwords.words(lang))
     
     # Filter out French stopwords
-    filtered_words = [word for word in words if word not in french_stopwords]
+    filtered_words = [str(word) for word in words if word not in french_stopwords]
     
     # Count the frequency of each word
     word_freq = Counter(filtered_words)
