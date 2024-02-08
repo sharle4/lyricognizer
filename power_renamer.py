@@ -27,7 +27,7 @@ def renamer(rd:bool, num=False):
 
             print("Les fichiers ont été renommés dans un ordre aléatoire.")
         else:
-            subfolders = ['raw', 'processed', 'processed_sw', 'processed_lm']
+            subfolders = ['processed', 'processed_sw', 'processed_lm']
             for subfolder in subfolders:
                 subfolder = f"{dossier_principal}{artiste}/{subfolder}"
                 if num == False:
