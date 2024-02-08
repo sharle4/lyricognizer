@@ -1,44 +1,60 @@
 import re
 import unidecode
+import spacy
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from nltk.stem import SnowballStemmer
-from nltk.stem import WordNetLemmatizer
+from langdetect import detect
 
-def preprocess(text, _stopwords=False, _stemming=False, _lemmatization=False):
-    # Remove annotations indicating verses and choruses
-    text = re.sub(r'\[.*?\]', '', text)
+def convert_lang_code(lang_code):
+    lang_mapping = {
+        'af': 'afrikaans', 'ar': 'arabic', 'bg': 'bulgarian', 'bn': 'bengali',
+        'ca': 'catalan', 'cs': 'czech', 'cy': 'welsh', 'da': 'danish', 'de': 'german',
+        'el': 'greek', 'en': 'english', 'es': 'spanish', 'et': 'estonian', 'fa': 'persian',
+        'fi': 'finnish', 'fr': 'french', 'gu': 'gujarati', 'he': 'hebrew', 'hi': 'hindi',
+        'hr': 'croatian', 'hu': 'hungarian', 'id': 'indonesian', 'it': 'italian', 'ja': 'japanese',
+        'kn': 'kannada', 'ko': 'korean', 'lt': 'lithuanian', 'lv': 'latvian', 'mk': 'macedonian',
+        'ml': 'malayalam', 'mr': 'marathi', 'ne': 'nepali', 'nl': 'dutch', 'no': 'norwegian',
+        'pa': 'punjabi', 'pl': 'polish', 'pt': 'portuguese', 'ro': 'romanian', 'ru': 'russian',
+        'sk': 'slovak', 'sl': 'slovenian', 'so': 'somali', 'sq': 'albanian', 'sv': 'swedish',
+        'sw': 'swahili', 'ta': 'tamil', 'te': 'telugu', 'th': 'thai', 'tl': 'tagalog', 'tr': 'turkish',
+        'uk': 'ukrainian', 'ur': 'urdu', 'vi': 'vietnamese', 'zh-cn': 'chinese', 'zh-tw': 'chinese',
+    }
+    return lang_mapping.get(lang_code.lower(), None)
 
-    # Remove punctuation and capital letters
-    text = re.sub(r"[^\w\s\']", '', text)
+
+def preprocess(text, lang, _stopwords=False, _lemmatization=False):
+    text = text.replace("-", " ")
     text = text.replace("'", " ")
+    text = re.sub(r'\[.*?\]', '', text)
+    text = re.sub(r"[^\w\s\']", '', text)
     text = text.lower()
-
-    # Delete line breaks
     text = text.replace("\n", " ")
-    
-    # Delete accents
     text = unidecode.unidecode(text)
 
-    # Tokenisation
     tokens = word_tokenize(text)
-    
+
     if _stopwords == True:
-        stop_words = set(stopwords.words('french'))
+        if lang == None:
+            try:
+                lang = detect(text)
+            except:
+                print('lang')
+                return text
+            lang = convert_lang_code(lang)
+        stop_words = set(stopwords.words(lang))
         filtered_tokens = [word for word in tokens if word not in stop_words]
         tokens = filtered_tokens
 
-    if _stemming == True:
-        stemmer = SnowballStemmer('french')
-        stemmed_tokens = [stemmer.stem(token) for token in tokens]
-        tokens = stemmed_tokens
-
     if _lemmatization == True:
-        lemmatizer = WordNetLemmatizer()
-        lemmatized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
-        tokens = lemmatized_tokens
+        if lang == 'french':
+            nlp = spacy.load("fr_core_news_sm")
+        elif lang == 'english':
+            nlp = spacy.load("en_core_web_sm")
+        else:
+            return(''.join(tokens))
+        doc = nlp(' '.join(tokens))
+        tokens = [token.lemma_ for token in doc]
 
-    # Rejoindre les tokens lemmatisés en une seule chaîne de texte
     preprocessed_text = ' '.join(tokens)
     
     return preprocessed_text

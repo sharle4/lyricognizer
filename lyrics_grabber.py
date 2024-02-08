@@ -1,13 +1,18 @@
 import requests
 import lyricsgenius
 import re
+import time
+import os
 
 # constant values.
 genius = lyricsgenius.Genius("1AqF1vBdyL1PRwnyWdxgj8r2nBtBZBnHrJL9Y2azkdne04F-FzOUBzSyATmgGqKA")
 BASE_URL = "https://api.genius.com"
 CLIENT_ACCESS_TOKEN = "1AqF1vBdyL1PRwnyWdxgj8r2nBtBZBnHrJL9Y2azkdne04F-FzOUBzSyATmgGqKA"
-ARTIST_NAME = "Freeze Corleone"
-folder = "lyrics/freeze/raw/"
+ARTIST_NAME = "Soolking"
+folder = "lyrics/soolking/raw/"
+max_songs = 101
+files = [fichier for fichier in os.listdir(folder) if os.path.isfile(os.path.join(folder, fichier))]
+beg = len(files)
 
 # send request and get response in json format.
 def _get(path, params=None, headers=None):
@@ -26,36 +31,26 @@ def _get(path, params=None, headers=None):
     return response.json()
 
 def get_artist_songs(artist_id):
-    # initialize variables & a list.
-    current_page = 1
-    next_page = True
-    songs = []
+    top_song_ids = []
+    page = 1
 
-    # main loop
-    while next_page:
-
-        path = "artists/{}/songs/".format(artist_id)
-        params = {'page': current_page}
+    while len(top_song_ids) < max_songs:
+        path = f"artists/{artist_id}/songs"
+        params = {'per_page': 20, 'sort': 'popularity', 'page': page}
         data = _get(path=path, params=params)
 
-        page_songs = data['response']['songs']
+        if 'songs' not in data['response'] or len(data['response']['songs']) == 0:
+            break
 
-        if page_songs:
-            # add all the songs of current page,
-            # and increment current_page value for next loop.
-            songs += page_songs
-            current_page += 1
-        else:
-            # if page_songs is empty, quit.
-            next_page = False
+        song_ids = [song['id'] for song in data['response']['songs'] if ARTIST_NAME in song['artist_names']]
+        top_song_ids.extend(song_ids)
 
-    # get all the song ids, excluding not-primary-artist songs.
-    songs = [song["id"] for song in songs
-             if song["primary_artist"]["id"] == artist_id]
+        page += 1
 
-    return songs
+    return top_song_ids[beg:max_songs]
 
 def get_lyrics(song_id):
+    time.sleep(1)
     return genius.lyrics(song_id)
 
 # # # 

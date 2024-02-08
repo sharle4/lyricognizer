@@ -16,7 +16,7 @@ def get_ngd(text,artist):
     words = []
     google_distances = []
     for k in range(len(tmp)):
-        words.append(str(tmp[k][0]))
+        words.append(str(tmp[k][0])) 
     print(words)
     for word in words:
         print(type(word),word)
