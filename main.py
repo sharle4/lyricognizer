@@ -21,30 +21,24 @@ def get_ngd(text,artist):
 
 
 if __name__ == "__main__":
-    text_to_test = str(input("Quelles sont vos lyrics?"))
-    #text_to_test = preprocess_str(text_to_test)
+    text_to_test = str(input("Quelles sont vos paroles?"))
+    text_to_test = preprocess(text_to_test)
     print(text_to_test)
-    #save_preprocessed_text(text_to_test,"texts/lyrics_sample.txt")
     artists = []
-    Dico_ngd = {}
+    #Dico_ngd = {}
     Dico_zlib = {}
     Dico_lzma={}
     Dico = {}
-    for file in os.listdir("./genius-lyrics-api-master/lib/dataset"):
-        if file == "utils":
-            continue
-        elif os.path.isfile(file):
-            continue    
-        else:
-            artists.append(file)
+    for folder in os.listdir("./lyrics"):
+        artists.append(folder)
     for artist in artists:
-        Dico_ngd[artist] = get_ngd(text_to_test,artist)
+        #Dico_ngd[artist] = get_ngd(text_to_test,artist)
         distances_zlib = []
         distances_lzma = []
-        path = "./genius-lyrics-api-master/lib/dataset/"+artist
+        path = f"./lyrics/{artist}/processed"
         songs = os.listdir(path)
         for song in songs:
-            with open(path+"/"+song,'r',encoding='utf-8') as file:
+            with open(f"{path}/{song}", 'r', encoding='utf-8') as file:
                 referring_text = file.read()
             distance_zlib = ncd_zlib(text_to_test, referring_text)
             distance_lzma = ncd_lzma(text_to_test, referring_text)
@@ -56,7 +50,7 @@ if __name__ == "__main__":
     print(f"Dico_zlib: {Dico_zlib}")
     print(f"Dico_lzma: {Dico_lzma}")
     print(f"Dico: {Dico}")
-    print(f"Dico_ngd: {Dico_ngd}")
+    #print(f"Dico_ngd: {Dico_ngd}")
         
 
 
