@@ -1,15 +1,11 @@
-from ncd_zlib import ncd as ncd_zlib
-from ncd_lzma import ncd as ncd_lzma
-from cleaner import *
 import os
+from cleaner import *
 from frequency import get_frequency
+from ncd import *
 from ngd import *
 
 def mean(L):
-    sum = 0
-    for val in L:
-        sum+=val
-    return sum/len(L)
+    return sum(L)/len(L)
 
 def get_ngd(text,artist):
     tmp = get_frequency(text)
@@ -25,43 +21,44 @@ def get_ngd(text,artist):
     print(mean(google_distances))
     return mean(google_distances)
 
-
-
-
 if __name__ == "__main__":
     artists = []
-    Dico_ngd = {}
     for folder in os.listdir("./lyrics"):
         artists.append(folder)
+        
+    dico, dico_zlib, dico_lzma, dico_bz2, dico_ngd = {}, {}, {}, {}, {}
     text_to_test = str(input("Quelles sont vos paroles?"))
-    #text_to_test = preprocess(text_to_test)
-    print(text_to_test)
-
-    Dico_zlib = {}
-    Dico_lzma={}
-    Dico = {}
 
     for artist in artists:
-        Dico_ngd[artist] = 1-get_ngd(text_to_test,artist)
+        dico_ngd[artist] = 1-get_ngd(text_to_test,artist)
+        
         distances_zlib = []
         distances_lzma = []
+        distances_bz2 = []
         path = f"./lyrics/{artist}/processed"
         songs = os.listdir(path)
+        
         for song in songs:
             with open(f"{path}/{song}", 'r', encoding='utf-8') as file:
                 referring_text = file.read()
-            distance_zlib = ncd_zlib(text_to_test, referring_text)
-            distance_lzma = ncd_lzma(text_to_test, referring_text)
+            distance_zlib = ncd(text_to_test, referring_text, 'zlib')
+            distance_lzma = ncd(text_to_test, referring_text, 'lzma')
+            distance_bz2 = ncd(text_to_test, referring_text, 'bz2')
             distances_zlib.append(1-distance_zlib)
             distances_lzma.append(1-distance_lzma)
-        Dico_lzma[artist] = mean(distances_lzma)
-        Dico_zlib[artist] = mean(distances_zlib)
-        Dico[artist] = ((Dico_lzma[artist]+Dico_zlib[artist])*2+Dico_ngd[artist])/3
-    print(f"Dico_zlib: {Dico_zlib}")
-    print(f"Dico_lzma: {Dico_lzma}")
-    print(f"Dico: {Dico}")
-    print(f"Dico_ngd: {Dico_ngd}")
+            distances_bz2.append(1-distance_bz2)
+            
+        dico_lzma[artist] = mean(distances_lzma)
+        dico_zlib[artist] = mean(distances_zlib)
+        dico_bz2[artist] = mean(distances_bz2)
+        dico[artist] = (dico_zlib[artist] + dico_lzma[artist] + dico_bz2[artist] + dico_ngd[artist])/4
         
+    print(f"dico_zlib: {dico_zlib}")
+    print(f"dico_lzma: {dico_lzma}")
+    print(f"dico_bz2: {dico_bz2}")
+    print(f"dico_ngd: {dico_ngd}")
+    print(f"dico: {dico}")
+
 
 
 
