@@ -3,6 +3,7 @@ from cleaner import *
 from frequency import get_frequency
 from ncd import *
 from ngd import *
+from plotter import bar_chart
 
 def mean(L):
     return sum(L)/len(L)
@@ -58,3 +59,4 @@ if __name__ == "__main__":
     print(f"dico_bz2: {dico_bz2}")
     #print(f"dico_ngd: {dico_ngd}")
     print(f"dico: {dico}")
+    bar_chart(dico_zlib,dico_lzma,dico_bz2,dico)
