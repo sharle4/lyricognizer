@@ -11,11 +11,11 @@ Créer une IA qui reçoit un texte de musique en entrée et qui doit donner le c
     - [x] Suppression de mots inutiles (le, la, ...) 
     - [x] Racinisation des mots
 3. [x] Séparation des données (80% entraînement, 20% test)
-4. [X] Calcul du NCD à l’aide de plusieurs méthodes de compression
+4. [x] Calcul du NCD à l’aide de plusieurs méthodes de compression
     - [x] zlib
-    - [X] bzip2
+    - [x] bz2
     - [x] lzma
-5. [X] Calcul du NGD
+5. [x] Calcul du NGD
 5. [ ] Retour d’un classement des artistes les plus probables
 
 **Choix des artistes :**

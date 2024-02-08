@@ -3,6 +3,7 @@ from cleaner import *
 from frequency import get_frequency
 from ncd import *
 from ngd import *
+from plotter import bar_chart
 
 def mean(L):
     return sum(L)/len(L)
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     text_to_test = str(input("Quelles sont vos paroles?"))
 
     for artist in artists:
-        dico_ngd[artist] = 1-get_ngd(text_to_test,artist)
+        #dico_ngd[artist] = 1-get_ngd(text_to_test,artist)
         
         distances_zlib = []
         distances_lzma = []
@@ -51,15 +52,11 @@ if __name__ == "__main__":
         dico_lzma[artist] = mean(distances_lzma)
         dico_zlib[artist] = mean(distances_zlib)
         dico_bz2[artist] = mean(distances_bz2)
-        dico[artist] = (dico_zlib[artist] + dico_lzma[artist] + dico_bz2[artist] + dico_ngd[artist])/4
+        dico[artist] = (dico_zlib[artist] + dico_lzma[artist] + dico_bz2[artist])/3
         
     print(f"dico_zlib: {dico_zlib}")
     print(f"dico_lzma: {dico_lzma}")
     print(f"dico_bz2: {dico_bz2}")
-    print(f"dico_ngd: {dico_ngd}")
+    #print(f"dico_ngd: {dico_ngd}")
     print(f"dico: {dico}")
-
-
-
-
-
+    bar_chart(dico_zlib,dico_lzma,dico_bz2,dico)
