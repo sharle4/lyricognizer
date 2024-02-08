@@ -26,11 +26,9 @@ def get_ngd(text,artist):
     return mean(google_distances)
 
 
-text = str(input("lyrics: "))
 
-get_ngd(text,'freeze coleone')
 
-"""if __name__ == "__main__":
+if __name__ == "__main__":
     artists = []
     Dico_ngd = {}
     for folder in os.listdir("./lyrics"):
@@ -63,7 +61,7 @@ get_ngd(text,'freeze coleone')
     print(f"Dico_lzma: {Dico_lzma}")
     print(f"Dico: {Dico}")
     print(f"Dico_ngd: {Dico_ngd}")
-        """
+        
 
 
 
