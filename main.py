@@ -19,9 +19,9 @@ def get_ngd(text,artist):
         words.append(str(tmp[k][0]))
     print(words)
     for word in words:
-        print(type(word),word)
-        print(type(artist),artist)
-        google_distances.append(calculate_NGD(str(word),str(artist))) 
+        ngd = calculate_NGD(str(word),str(artist))
+        print(ngd,word,artist)
+        google_distances.append(ngd) 
     print(mean(google_distances))
     return mean(google_distances)
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     Dico = {}
 
     for artist in artists:
-        Dico_ngd[artist] = get_ngd(text_to_test,artist)
+        Dico_ngd[artist] = 1-get_ngd(text_to_test,artist)
         distances_zlib = []
         distances_lzma = []
         path = f"./lyrics/{artist}/processed"
@@ -56,7 +56,7 @@ if __name__ == "__main__":
             distances_lzma.append(1-distance_lzma)
         Dico_lzma[artist] = mean(distances_lzma)
         Dico_zlib[artist] = mean(distances_zlib)
-        Dico[artist] = (Dico_lzma[artist]+Dico_zlib[artist])/2
+        Dico[artist] = ((Dico_lzma[artist]+Dico_zlib[artist])*2+Dico_ngd[artist])/3
     print(f"Dico_zlib: {Dico_zlib}")
     print(f"Dico_lzma: {Dico_lzma}")
     print(f"Dico: {Dico}")

@@ -24,7 +24,7 @@ def get_frequency(text, lang='french'):
     # Sort the words by frequency
     sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
     
-    return sorted_word_freq[:15]
+    return sorted_word_freq[:5]
 
 
 if __name__ == "__main__":
