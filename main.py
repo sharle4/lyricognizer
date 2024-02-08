@@ -6,6 +6,7 @@ from ngd import *
 from plotter import bar_chart
 
 def mean(L):
+    """donne la moyenne d'une liste de flottants""" 
     #return sum(L)/len(L)
     if L ==[]:
         return 0
@@ -16,6 +17,7 @@ def mean(L):
         return sum/len(L)
 
 def get_ngd(text,artist):
+    """donne la moyenne des ngd entre les mots les plus fréquents du texte et le nom de l'artiste """
     tmp = get_frequency(text)
     words = []
     google_distances = []
@@ -54,14 +56,19 @@ if __name__ == "__main__":
             distance_bz2 = ncd(text_to_test, referring_text, 'bz2')
             distances_zlib.append(1-distance_zlib)
             distances_lzma.append(1-distance_lzma)
+            distances_bz2.append(1-distance_bz2)
         dico_lzma[artist] = mean(distances_lzma)
         dico_zlib[artist] = mean(distances_zlib)
-        dico[artist] = ((dico_lzma[artist]+dico_zlib[artist])*2+dico_ngd[artist])/3
+        dico_bz2[artist] = mean(distances_bz2)
+        dico[artist] = (dico_lzma[artist]+dico_zlib[artist])/3             #+dico_ngd[artist])/3
     print(f"Dico_zlib: {dico_zlib}")
     print(f"dico_lzma: {dico_lzma}")
     print(f"dico: {dico}")
-    print(f"dico_ngd: {dico_ngd}")
-    bar_chart(dico_bz2,dico_lzma,dico_zlib,dico_ngd,dico)
+    #print(f"dico_ngd: {dico_ngd}")
+    most_likely_artist = max(dico, key=dico.get)            #variable de qui donne l'artiste le plus proche
+    print("l'artiste qui a le plus de chance d'écrire ces paroles est:",most_likely_artist)
+    bar_chart(dico_bz2,dico_lzma,dico_zlib,dico)
+    
         
 
 
