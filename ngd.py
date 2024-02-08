@@ -62,7 +62,9 @@ def calculate_NGD(w1, w2, n_retries=10):
 
   for attempt in range(n_retries):
     try:
-      return NGD(w1, w2)
+      ngd = NGD(w1,w2)
+      print(f"ngd obtained!: {ngd}")
+      return ngd
     except Exception as e:
       print("Trying again...")
       print(e)
@@ -95,10 +97,11 @@ def pairwise_NGD_to_df(distances):
 def number_of_results(text):
   """Returns the number of Google results for a given query."""
   headers = {'User-Agent': UserAgent().firefox}
-  sleep(5, 10)
+  sleep(1, 3)
   r = requests.get("https://www.google.com/search?q={}".format(text.replace(" ","+")), headers=headers)
   soup = BeautifulSoup(r.text, "lxml") # Get text response
   res = soup.find('div', {'id': 'result-stats'}) # Find result string 
+  print(text,int(res.text.replace(",", "").split()[1]))
   return int(res.text.replace(",", "").split()[1]) # Return result int
 
 def sleep(alpha, beta):
@@ -108,5 +111,5 @@ def sleep(alpha, beta):
 
 if __name__ == "__main__":
   print("This is a script for calculating NGD.")
-  calculate_NGD('four','frigo')
+  calculate_NGD('four','lune')
 
