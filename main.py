@@ -37,7 +37,7 @@ if __name__ == "__main__":
             res_test_artist = []
             rank = [0, 0, 0]
             count_base_music = 0
-            for test_song in os.listdir(f"./lyrics/{test_artist}/{text_format}"):
+            for test_song in os.listdir(f"./lyrics/{test_artist}/{text_format}")[:20]:
                 res_test_song = {"zlib" : [{}], "lzma" : [{}], "bz2" : [{}]}
                 with open(f"./lyrics/{test_artist}/{text_format}/{test_song}", 'r', encoding='utf-8') as file:
                     text_test_song = file.read()
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                     distances_zlib = []
                     distances_lzma = []
                     distances_bz2 = []
-                    for base_song in os.listdir(f"./lyrics/{base_artist}/{text_format}"):
+                    for base_song in os.listdir(f"./lyrics/{base_artist}/{text_format}")[20:]:
                         with open(f"./lyrics/{base_artist}/{text_format}/{base_song}", 'r', encoding='utf-8') as file:
                             text_base_song = file.read()
                         distances_zlib.append(1-ncd(text_test_song, text_base_song, 'zlib'))
