@@ -36,47 +36,50 @@ if __name__ == "__main__":
     artists = []
     for folder in os.listdir("./lyrics"):
         artists.append(folder)
-    results = []
-    for text_format in ["processed"]:
+    results = {}
+    for text_format in ["processed_sw"]:
         for test_artist in artists:
-            res_test_artist = []
-            rank = [0, 0, 0]
-            count_base_music = 0
+            res_test_artist = [{artist[2:]: [[], []] for artist in artists}]
+            
             for test_song in os.listdir(f"./lyrics/{test_artist}/{text_format}")[:20]:
-                res_test_song = {"zlib" : [{}], "lzma" : [{}], "bz2" : [{}]}
+                res_test_song = {artist[2:]: [[], []] for artist in artists}
                 with open(f"./lyrics/{test_artist}/{text_format}/{test_song}", 'r', encoding='utf-8') as file:
                     text_test_song = file.read()
                 print(f"Méthode de formattage : {text_format} - Analyse des paroles de la chanson {test_song} de {test_artist}")
                 
                 for base_artist in artists:
-                    distances_zlib = []
-                    distances_lzma = []
-                    distances_bz2 = []
+                    invdist = [0,0,0]
+                    songs_count = 0
+                    
                     for base_song in os.listdir(f"./lyrics/{base_artist}/{text_format}")[20:]:
                         with open(f"./lyrics/{base_artist}/{text_format}/{base_song}", 'r', encoding='utf-8') as file:
                             text_base_song = file.read()
-                        distances_zlib.append(1-ncd(text_test_song, text_base_song, 'zlib'))
-                        distances_lzma.append(1-ncd(text_test_song, text_base_song, 'lzma'))
-                        distances_bz2.append(1-ncd(text_test_song, text_base_song, 'bz2'))
-                        count_base_music += 1
-                    res_test_song["zlib"][0][f"{base_artist}"[2:]] = mean(distances_zlib)
-                    res_test_song["lzma"][0][f"{base_artist}"[2:]] = mean(distances_lzma)
-                    res_test_song["bz2"][0][f"{base_artist}"[2:]] = mean(distances_bz2)
-                    rank_artist_zlib = sorted(res_test_song["zlib"][0].values(), reverse=True).index(res_test_song["zlib"][0][f"{base_artist}"[2:]]) + 1
-                    rank_artist_lzma = sorted(res_test_song["lzma"][0].values(), reverse=True).index(res_test_song["lzma"][0][f"{base_artist}"[2:]]) + 1
-                    rank_artist_bz2 = sorted(res_test_song["bz2"][0].values(), reverse=True).index(res_test_song["bz2"][0][f"{base_artist}"[2:]]) + 1
-                    res_test_song["zlib"].append(rank_artist_zlib)
-                    res_test_song["lzma"].append(rank_artist_lzma)
-                    res_test_song["bz2"].append(rank_artist_bz2)
-                    rank[0] += rank_artist_zlib
-                    rank[1] += rank_artist_lzma
-                    rank[2] += rank_artist_bz2
-                res_test_artist.append(res_test_song)
+                        invdist[0] += 1-ncd(text_test_song, text_base_song, 'zlib')
+                        invdist[1] += 1-ncd(text_test_song, text_base_song, 'lzma')
+                        invdist[2] += 1-ncd(text_test_song, text_base_song, 'bz2')
+                        songs_count += 1
 
-            rank = [r/count_base_music for r in rank]
-            res_test_artist.append({"zlib" : rank[0], "lzma" : rank[0], "bz2" : rank[0]})
-            results.append(res_test_artist)
-    final_results = {artists[i][2:]: results[i] for i in range(len(artists))}
-    save_dico_txt(final_results, "final_results.txt")
-    print(final_results)
-    
+                    invdist = [id/songs_count for id in invdist]
+                    res_test_song[base_artist[2:]][0] = invdist.copy()
+                for artiste in res_test_song:
+                    for i in range(3):
+                        scores_i = [res_test_song[artiste][0][i] for artiste in res_test_song]
+                        rang = sorted(scores_i, reverse=True).index(res_test_song[artiste][0][i]) + 1
+                        res_test_song[artiste][1].append(rang)
+            
+                res_test_artist.append(res_test_song)
+                
+            for artist in artists:
+                dist, rank = [0,0,0], [0,0,0]
+                for dico_res_musique in res_test_artist[1:]:
+                    for i in range(3):
+                        dist[i] += dico_res_musique[artist[2:]][0][i]/20
+                        rank[i] += dico_res_musique[artist[2:]][1][i]/20
+                res_test_artist[0][artist[2:]][0] = dist.copy()
+                res_test_artist[0][artist[2:]][1] = rank.copy()
+
+                
+        results[test_artist[2:]] = res_test_artist
+            
+    save_dico_txt(results, "final_results_sw.txt")
+    print("enfin fini")
