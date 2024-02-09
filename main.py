@@ -11,7 +11,12 @@ def mean(L):
         return 0
     else:
         return(sum(L)/len(L))
-
+    
+def save_dico_txt(dico, filename):
+    with open(filename, 'w') as f:
+        for cle, valeur in dico.items():
+            f.write(f"{cle}: {valeur}\n")
+            
 def get_ngd(text,artist):
     """donne la moyenne des ngd entre les mots les plus fréquents du texte et le nom de l'artiste """
     tmp = get_frequency(text)
@@ -32,7 +37,7 @@ if __name__ == "__main__":
     for folder in os.listdir("./lyrics"):
         artists.append(folder)
     results = []
-    for text_format in ["processed", "processed_sw", "processed_lm"]:
+    for text_format in ["processed"]:
         for test_artist in artists:
             res_test_artist = []
             rank = [0, 0, 0]
@@ -67,8 +72,11 @@ if __name__ == "__main__":
                     rank[1] += rank_artist_lzma
                     rank[2] += rank_artist_bz2
                 res_test_artist.append(res_test_song)
-            rank = rank/count_base_music
+
+            rank = [r/count_base_music for r in rank]
             res_test_artist.append({"zlib" : rank[0], "lzma" : rank[0], "bz2" : rank[0]})
-    
+            results.append(res_test_artist)
     final_results = {artists[i][2:]: results[i] for i in range(len(artists))}
+    save_dico_txt(final_results, "final_results.txt")
     print(final_results)
+    
