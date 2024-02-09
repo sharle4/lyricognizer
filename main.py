@@ -68,7 +68,8 @@ if __name__ == "__main__":
                         res_test_song[artiste][1].append(rang)
             
                 res_test_artist.append(res_test_song)
-                
+                if test_artist == "0_aznavour" and test_song == '_00.txt':
+                    save_dico_txt(res_test_song, "1.txt")
             for artist in artists:
                 dist, rank = [0,0,0], [0,0,0]
                 for dico_res_musique in res_test_artist[1:]:
@@ -78,8 +79,9 @@ if __name__ == "__main__":
                 res_test_artist[0][artist[2:]][0] = dist.copy()
                 res_test_artist[0][artist[2:]][1] = rank.copy()
 
-                
-        results[test_artist[2:]] = res_test_artist
+            if test_artist == "0_aznavour":
+                    save_dico_txt(res_test_artist[0], "2.txt") 
+            results[test_artist[2:]] = res_test_artist
             
     save_dico_txt(results, "final_results_sw.txt")
     print("enfin fini")
