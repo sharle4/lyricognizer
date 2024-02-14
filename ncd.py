@@ -1,19 +1,17 @@
-import lzma
 import bz2
-import zlib
+import json
 
-def compress_data(data, method):
-    if method == 'lzma':
-        return lzma.compress(data.encode('utf-8'))
-    elif method == 'bz2':
-        return bz2.compress(data.encode('utf-8'))
-    elif method == 'zlib':
-        return zlib.compress(data.encode('utf-8'))
+with open("compression_dict.txt", 'r', encoding='utf-8') as file:
+    compression_dict = json.load(file)
 
-def ncd(x, y, method):
-    x_y = x + ' ' + y
-    x_comp = compress_data(x, method)
-    y_comp = compress_data(y, method)
-    x_y_comp = compress_data(x_y, method)
+def ncd(text1, test_artist, test_song, base_artist, base_song, text_format):
+    path = f"./lyrics/{base_artist}/{text_format}/{base_song}"
+    with open(path, 'r', encoding='utf-8') as file:
+        text2 = file.read()
+        
+    t1_2 = text1 + ' ' + text2
+    l1 = compression_dict[test_artist][int(text_format)][int(test_song[1:-4])]
+    l2 = compression_dict[base_artist][int(text_format)][int(base_song[1:-4])]
+    l1_2 = len(bz2.compress(t1_2.encode('utf-8')))
 
-    return (len(x_y_comp) - min(len(x_comp), len(y_comp))) / max(len(x_comp), len(y_comp))
+    return (l1_2 - min(l1, l2)) / max(l1, l2)

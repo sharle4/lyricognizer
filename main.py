@@ -1,9 +1,6 @@
 import os
-from cleaner import *
-from frequency import get_frequency
-from ncd import *
-from ngd import *
-from plotter import bar_chart
+import json
+from ncd import ncd
 
 def mean(L):
     """donne la moyenne d'une liste d'entiers""" 
@@ -14,75 +11,60 @@ def mean(L):
     
 def save_dico_txt(dico, filename):
     with open(filename, 'w') as f:
-        for cle, valeur in dico.items():
-            f.write(f"{cle}: {valeur}\n")
+        json.dump(dico, f, indent=4)
             
-def get_ngd(text,artist):
-    """donne la moyenne des ngd entre les mots les plus fréquents du texte et le nom de l'artiste """
-    tmp = get_frequency(text)
-    words = []
-    google_distances = []
-    for k in range(len(tmp)):
-        words.append(str(tmp[k][0])) 
-    print(words)
-    for word in words:
-        ngd = calculate_NGD(str(word),str(artist))
-        print(ngd,word,artist)
-        google_distances.append(ngd) 
-    print(mean(google_distances))
-    return mean(google_distances)
-
 if __name__ == "__main__":
     artists = []
     for folder in os.listdir("./lyrics"):
         artists.append(folder)
     results = {}
-    for text_format in ["processed_sw"]:
-        for test_artist in artists:
-            res_test_artist = [{artist: [[], []] for artist in artists}]
+    for test_artist in artists:
+        res_test_artist = [{artist: [[], []] for artist in artists}]
+        
+        for test_song_num in range(20):
+            res_test_song = {artist: [[], []] for artist in artists}
+            test_song = f"_{str(test_song_num).zfill(2)}.txt"
+            text_test_song = []
+            for i in range(3):
+                with open(f"./lyrics/{test_artist}/{i}/{test_song}", 'r', encoding='utf-8') as file:
+                    text_test_song.append(file.read())
+
+            print(f"Analyse des paroles de la chanson {test_song} de {test_artist}")
             
-            for test_song in os.listdir(f"./lyrics/{test_artist}/{text_format}")[:20]:
-                res_test_song = {artist: [[], []] for artist in artists}
-                with open(f"./lyrics/{test_artist}/{text_format}/{test_song}", 'r', encoding='utf-8') as file:
-                    text_test_song = file.read()
-                print(f"Méthode de formattage : {text_format} - Analyse des paroles de la chanson {test_song} de {test_artist}")
+            for base_artist in artists:
+                dist = [0,0,0]                    
+                for base_song_num in range(20,100):
+                    base_song = f"_{str(base_song_num).zfill(2)}.txt"
+                    for i in range(3):
+                        dist[i] += ncd(text_test_song[i], test_artist, test_song, base_artist, base_song, i)
+                    
+                dist = [id/80 for id in dist]
+                res_test_song[base_artist][0] = dist.copy()
                 
-                for base_artist in artists:
-                    invdist = [0,0,0]
-                    songs_count = 0
-                    
-                    for base_song in os.listdir(f"./lyrics/{base_artist}/{text_format}")[20:]:
-                        with open(f"./lyrics/{base_artist}/{text_format}/{base_song}", 'r', encoding='utf-8') as file:
-                            text_base_song = file.read()
-                        invdist[0] += 1-ncd(text_test_song, text_base_song, 'zlib')
-                        invdist[1] += 1-ncd(text_test_song, text_base_song, 'lzma')
-                        invdist[2] += 1-ncd(text_test_song, text_base_song, 'bz2')
-                        songs_count += 1
-
-                    invdist = [id/songs_count for id in invdist]
-                    res_test_song[base_artist][0] = invdist.copy()
-                for artiste in res_test_song:
-                    for i in range(3):
-                        scores_i = [res_test_song[artiste][0][i] for artiste in res_test_song]
-                        rang = sorted(scores_i, reverse=True).index(res_test_song[artiste][0][i]) + 1
-                        res_test_song[artiste][1].append(rang)
+            for artiste in res_test_song:
+                for i in range(3):
+                    scores_i = [res_test_song[artiste][0][i] for artiste in res_test_song]
+                    rang = sorted(scores_i).index(res_test_song[artiste][0][i]) + 1
+                    res_test_song[artiste][1].append(rang)
+        
+            res_test_artist.append(res_test_song)
             
-                res_test_artist.append(res_test_song)
-                if test_artist == "aznavour" and test_song == '_00.txt': #debug
-                    save_dico_txt(res_test_song, "1.txt")
-            for artist in artists:
-                dist, rank = [0,0,0], [0,0,0]
-                for dico_res_musique in res_test_artist[1:]:
-                    for i in range(3):
-                        dist[i] += dico_res_musique[artist][0][i]/20
-                        rank[i] += dico_res_musique[artist][1][i]/20
-                res_test_artist[0][artist][0] = dist.copy()
-                res_test_artist[0][artist][1] = rank.copy()
-
-            if test_artist == "aznavour": #debug
-                    save_dico_txt(res_test_artist[0], "2.txt") 
-                    
-            results[test_artist] = res_test_artist
+            if test_artist == "aznavour" and test_song == '_00.txt': #debug
+                save_dico_txt(res_test_song, "1.txt")
+                
+        for artist in artists:
+            dist, rank = [0,0,0], [0,0,0]
+            for dico_res_musique in res_test_artist[1:]:
+                for i in range(3):
+                    dist[i] += dico_res_musique[artist][0][i]/20
+                    rank[i] += dico_res_musique[artist][1][i]/20
+            res_test_artist[0][artist][0] = dist.copy()
+            res_test_artist[0][artist][1] = rank.copy()
             
-    save_dico_txt(results, "final_results_sw.txt")
-    print("enfin fini")
+        if test_artist == "aznavour": #debug
+                save_dico_txt(res_test_artist[0], "2.txt") 
+                
+        results[test_artist] = res_test_artist
+            
+    save_dico_txt(results, "final_results.txt")
+    print("Processed finished")
