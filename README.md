@@ -16,7 +16,7 @@ Créer une IA qui reçoit un texte de musique en entrée et qui doit donner le c
     - [x] bz2
     - [x] lzma
 5. [x] Calcul du NGD
-5. [ ] Retour d’un classement des artistes les plus probables
+5. [x] Retour d’un classement des artistes les plus probables
 
 **Choix des artistes :**
 - [x] Charles Aznavour

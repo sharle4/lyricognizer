@@ -39,10 +39,10 @@ if __name__ == "__main__":
     results = {}
     for text_format in ["processed_sw"]:
         for test_artist in artists:
-            res_test_artist = [{artist[2:]: [[], []] for artist in artists}]
+            res_test_artist = [{artist: [[], []] for artist in artists}]
             
             for test_song in os.listdir(f"./lyrics/{test_artist}/{text_format}")[:20]:
-                res_test_song = {artist[2:]: [[], []] for artist in artists}
+                res_test_song = {artist: [[], []] for artist in artists}
                 with open(f"./lyrics/{test_artist}/{text_format}/{test_song}", 'r', encoding='utf-8') as file:
                     text_test_song = file.read()
                 print(f"Méthode de formattage : {text_format} - Analyse des paroles de la chanson {test_song} de {test_artist}")
@@ -60,7 +60,7 @@ if __name__ == "__main__":
                         songs_count += 1
 
                     invdist = [id/songs_count for id in invdist]
-                    res_test_song[base_artist[2:]][0] = invdist.copy()
+                    res_test_song[base_artist][0] = invdist.copy()
                 for artiste in res_test_song:
                     for i in range(3):
                         scores_i = [res_test_song[artiste][0][i] for artiste in res_test_song]
@@ -68,20 +68,21 @@ if __name__ == "__main__":
                         res_test_song[artiste][1].append(rang)
             
                 res_test_artist.append(res_test_song)
-                if test_artist == "0_aznavour" and test_song == '_00.txt':
+                if test_artist == "aznavour" and test_song == '_00.txt': #debug
                     save_dico_txt(res_test_song, "1.txt")
             for artist in artists:
                 dist, rank = [0,0,0], [0,0,0]
                 for dico_res_musique in res_test_artist[1:]:
                     for i in range(3):
-                        dist[i] += dico_res_musique[artist[2:]][0][i]/20
-                        rank[i] += dico_res_musique[artist[2:]][1][i]/20
-                res_test_artist[0][artist[2:]][0] = dist.copy()
-                res_test_artist[0][artist[2:]][1] = rank.copy()
+                        dist[i] += dico_res_musique[artist][0][i]/20
+                        rank[i] += dico_res_musique[artist][1][i]/20
+                res_test_artist[0][artist][0] = dist.copy()
+                res_test_artist[0][artist][1] = rank.copy()
 
-            if test_artist == "0_aznavour":
+            if test_artist == "aznavour": #debug
                     save_dico_txt(res_test_artist[0], "2.txt") 
-            results[test_artist[2:]] = res_test_artist
+                    
+            results[test_artist] = res_test_artist
             
     save_dico_txt(results, "final_results_sw.txt")
     print("enfin fini")

@@ -5,9 +5,9 @@ for artiste in os.listdir("./lyrics"):
     artist_folder = os.path.join("./lyrics", artiste)
     print(f"Processing artist: {artiste}")
     
-    if artiste in ["1_bbj", "2_damso", "4_freeze", "5_gazo", "6_lomepal", "9_soolking", "8_nekfeu"]:
+    if artiste in ["bbj", "damso", "freeze", "gazo", "lomepal", "soolking", "nekfeu"]:
         lang = "french"
-    elif artiste == '3_drake':
+    elif artiste == 'drake':
         lang = "english"
     else:
         lang = None
